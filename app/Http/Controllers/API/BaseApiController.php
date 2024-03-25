@@ -64,6 +64,27 @@ class BaseApiController extends Controller
         }
     }
 
+    public function login(Request $request){
+        $data= $request->validate([
+            'email' =>  'required|email',
+            'password'  =>  'required'
+        ]);
+        $user= User::where('email',$request->email)->first();
+        if($user){
+            if(auth()->attempt($data)){
+                $token= $user->createToken($user->email)->plainTextToken;
+                $message="Logged in successfully";
+                $status=true;
+                return response(['message'=> $message,'status'=> $status,'token'=> $token,'user'=>$user]);
+            }
+        }else{
+            $message="User does not exist";
+            $status=false;
+            return response(['message'=>$message,'status'=>$status]);
+        }
+        
+    }
+
     /**
      * To show detail of specific user.
      */
@@ -75,7 +96,7 @@ class BaseApiController extends Controller
             $status=true;
             return response(['message'=>$message,'status'=>$status,'record'=>$record]);
         }else{
-            $message="Unable to fetch record";
+            $message="Record not found";
             $status=false;
             return response(['message'=>$message,'status'=>$status]);
         }

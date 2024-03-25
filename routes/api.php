@@ -17,6 +17,10 @@ use App\Http\Controllers\API\BaseApiController;
 
 Route::get('/',[BaseApiController::class,'index']);
 Route::post('/user/store',[BaseApiController::class,'store']);
-Route::get('/user/details/{id}',[BaseApiController::class,'show']);
-Route::put('/user/update/{id}',[BaseApiController::class,'update']);
-Route::delete('/user/delete/{id}',[BaseApiController::class,'destroy']);
+Route::post('/user/login',[BaseApiController::class,'login']);
+
+Route::prefix('/user')->middleware(['auth:sanctum'])->group(function(){
+    Route::get('/details/{id}',[BaseApiController::class,'show']);
+    Route::put('/update/{id}',[BaseApiController::class,'update']);
+    Route::delete('/delete/{id}',[BaseApiController::class,'destroy']);
+});
