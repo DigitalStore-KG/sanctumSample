@@ -52,7 +52,11 @@ class BaseApiController extends Controller
             'city'  =>  $request->city,
             'country'  =>  $request->country,
         ];
-        $record = User::create($data);
+        try {
+            $record = User::create($data);
+        } catch (\Throwable $th) {
+            return response(['message'=>$th->getMessage()]);
+        }
         if($record){
             $message="Record stored successfully";
             $status=true;
@@ -82,6 +86,14 @@ class BaseApiController extends Controller
             $status=false;
             return response(['message'=>$message,'status'=>$status]);
         }
+        
+    }
+
+    public function logout(){
+        auth()->user()->tokens()->delete();
+        $message="Logged out successfully";
+        $status=true;
+        return response(['message'=>$message,'status'=>$status]);
         
     }
 

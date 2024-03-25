@@ -23,4 +23,5 @@ Route::prefix('/user')->middleware(['auth:sanctum'])->group(function(){
     Route::get('/details/{id}',[BaseApiController::class,'show']);
     Route::put('/update/{id}',[BaseApiController::class,'update']);
     Route::delete('/delete/{id}',[BaseApiController::class,'destroy']);
+    Route::post('/logout',[BaseApiController::class,'logout']);
 });
