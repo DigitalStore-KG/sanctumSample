@@ -4,15 +4,27 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class BaseApiController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of users.
      */
     public function index()
     {
-        //
+        $users = User::get();
+        if($users){
+            $message="Records feched successfully";
+            $status=true;
+            return response(['message'=> $message,'status'=> $status,'users'=> $users]);
+        }else{
+            $message="Unable to fetch records";
+            $status=false;
+            return response(['message'=>$message,'status'=>$status]);
+        }
+        
     }
 
     /**
@@ -24,19 +36,49 @@ class BaseApiController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created record in storage.
      */
     public function store(Request $request)
     {
-        //
+        $validated=$request->validate([
+            'name'      =>  'required',
+            'email'     =>  'required|email',
+            'password'  =>  'required',
+        ]);
+        $data=[
+            'name'  =>  $request->name,
+            'email'  =>  $request->email,
+            'password'  =>  Hash::make($request->password),
+            'city'  =>  $request->city,
+            'country'  =>  $request->country,
+        ];
+        $record = User::create($data);
+        if($record){
+            $message="Record stored successfully";
+            $status=true;
+            return response(['message'=> $message,'status'=> $status,'record'=> $record]);
+        }else{
+            $message="Unable to store record";
+            $status=false;
+            return response(['message'=>$message,'status'=>$status]);
+        }
     }
 
     /**
-     * Display the specified resource.
+     * To show detail of specific user.
      */
-    public function show(string $id)
+    public function show(String $id)
     {
-        //
+        $record = User::find($id);
+        if($record){
+            $message="Feched record sussfully";
+            $status=true;
+            return response(['message'=>$message,'status'=>$status,'record'=>$record]);
+        }else{
+            $message="Unable to fetch record";
+            $status=false;
+            return response(['message'=>$message,'status'=>$status]);
+        }
     }
 
     /**
@@ -48,18 +90,39 @@ class BaseApiController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * To update records of user.
      */
     public function update(Request $request, string $id)
     {
-        //
+        $user = User::find($id);
+        $user->update($request->all());
+        if($user){
+            $message="Updated record sussfully";
+            $status=true;
+            return response(['message'=>$message,'status'=>$status,'user'=>$user]);
+        }else{
+            $message="Unable to update record";
+            $status=false;
+            return response(['message'=>$message,'status'=>$status]);
+        }
+        
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Function to remove specific user from database.
      */
     public function destroy(string $id)
     {
-        //
+        $user   = User::find($id);
+        $record = $user->delete();
+        if($record){
+            $message="Deleted record sussfully";
+            $status=true;
+            return response(['message'=>$message,'status'=>$status]);
+        }else{
+            $message="Unable to delete record";
+            $status=false;
+            return response(['message'=>$message,'status'=>$status]);
+        }
     }
 }
