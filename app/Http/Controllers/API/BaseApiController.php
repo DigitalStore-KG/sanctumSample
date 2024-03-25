@@ -42,7 +42,7 @@ class BaseApiController extends Controller
     {
         $validated=$request->validate([
             'name'      =>  'required',
-            'email'     =>  'required|email',
+            'email'     =>  'required|email|unique:users',
             'password'  =>  'required',
         ]);
         $data=[
@@ -52,11 +52,7 @@ class BaseApiController extends Controller
             'city'  =>  $request->city,
             'country'  =>  $request->country,
         ];
-        try {
-            $record = User::create($data);
-        } catch (\Throwable $th) {
-            return response(['message'=>$th->getMessage()]);
-        }
+        $record = User::create($data);
         if($record){
             $message="Record stored successfully";
             $status=true;
