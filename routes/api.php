@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\API\BaseApiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +15,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::get('/',[BaseApiController::class,'index']);
+Route::post('/user/store',[BaseApiController::class,'store']);
+Route::get('/user/details/{id}',[BaseApiController::class,'show']);
+Route::put('/user/update/{id}',[BaseApiController::class,'update']);
+Route::delete('/user/delete/{id}',[BaseApiController::class,'destroy']);
