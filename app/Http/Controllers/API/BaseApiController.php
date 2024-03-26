@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\URL;
 
 class BaseApiController extends Controller
 {
@@ -153,5 +154,33 @@ class BaseApiController extends Controller
             $status=false;
             return response(['message'=>$message,'status'=>$status]);
         }
+    }
+    public function loggedUser(){
+        $loggedUser= auth()->user();
+        $message="Detail of Currently logged user";
+        $status=true;
+        return response(['message'=>$message,'status'=>$status,'user'=>$loggedUser]);
+    }
+
+    /*------------------ Change Password function----------------------------- */
+
+    public function changePassword(Request $request){
+        $validated=$request->validate([
+            'oldPassword'   => 'required',
+            'newPassword'   =>  'required',
+        ]);
+        $user= auth()->user();
+        if(Hash::check($request->oldPassword,$user->password)){
+            $user->password=Hash::make($request->newPassword);
+            $user->update();
+            $message="Password Changed Successfully";
+            $status=true;
+            return response(['message'=>$message,'status'=>$status]);
+        }else{
+            $message="Your previous password does not match";
+            $status=false;
+            return response(['message'=>$message,'status'=>$status]);
+        }
+        
     }
 }
